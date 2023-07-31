@@ -1,0 +1,35 @@
+name: Build and upload binaries to release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    name: Publish for ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact_name: target/release/sweepr
+            asset_name: sweepr-linux-amd64
+          - os: macos-latest
+            artifact_name: target/release/sweepr
+            asset_name: sweepr-macos-amd64
+    steps:
+      - name: Get the version
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Build project
+        run: cargo build --release --locked
+      - name: Upload binary to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ matrix.artifact_name }}
+          asset_name: ${{ matrix.asset_name }}
+          tag: ${{ steps.get_version.outputs.VERSION }}

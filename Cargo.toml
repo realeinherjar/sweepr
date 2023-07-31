@@ -1,0 +1,13 @@
+[package]
+name = "sweepr"
+version = "0.1.0"
+edition = "2021"
+authors = ["Einherjar <realeinherjar@proton.me>"]
+description = "A sweepr CLI for the hodlr that just want to sweep the funds from a seed to an address"
+license = "MIT"
+readme = "README.md"
+
+[dependencies]
+bdk = { version = "0.28.0", features = ["keys-bip39"] }
+bitcoin = "0.30.1"
+clap = { version = "4.3.0", features = ["derive"] }
