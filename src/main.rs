@@ -1,4 +1,6 @@
 use clap::Parser;
+
+mod bip39;
 mod cli;
 mod network;
 
