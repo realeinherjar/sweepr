@@ -1,16 +1,9 @@
-use bdk::blockchain::ElectrumBlockchain;
-use bdk::electrum_client::Client;
+use bdk::blockchain::esplora::EsploraBlockchain;
 use bitcoin::network::constants::Network;
 
-fn create_con(server: &str) -> Client {
-    match Client::new(server) {
-        Ok(con) => con,
-        Err(e) => panic!("Error creating connection: {}", e),
-    }
-}
-fn create_blockchain(server: &str) -> ElectrumBlockchain {
-    let client = create_con(server);
-    ElectrumBlockchain::from(client)
+fn create_blockchain(url: &str, stop_gap: Option<usize>) -> EsploraBlockchain {
+    // TODO: 20 stop_gap is hardcoded for now
+    EsploraBlockchain::new(url, stop_gap.unwrap_or(20))
 }
 
 fn create_network(network: &str) -> Network {

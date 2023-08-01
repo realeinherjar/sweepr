@@ -14,7 +14,7 @@ pub struct Args {
     #[arg(short, long, default_value = "mainnet")]
     network: String,
 
-    /// Electrum server to use
-    #[arg(short, long, default_value = "ssl://electrum.blockstream.info:60002")]
-    server: String,
+    /// Esplora server to use
+    #[arg(short, long, default_value = "https://blockstream.info/api")]
+    url: String,
 }
