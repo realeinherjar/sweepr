@@ -9,5 +9,4 @@ readme = "README.md"
 
 [dependencies]
 bdk = { version = "0.28.0", features = ["keys-bip39", "use-esplora-blocking"] }
-bitcoin = "0.30.1"
 clap = { version = "4.3.0", features = ["derive"] }

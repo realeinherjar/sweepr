@@ -1,12 +1,12 @@
+use bdk::bitcoin::network::constants::Network;
 use bdk::blockchain::esplora::EsploraBlockchain;
-use bitcoin::network::constants::Network;
 
-fn create_blockchain(url: &str, stop_gap: Option<usize>) -> EsploraBlockchain {
+pub fn create_blockchain(url: &str, stop_gap: Option<usize>) -> EsploraBlockchain {
     // TODO: 20 stop_gap is hardcoded for now
     EsploraBlockchain::new(url, stop_gap.unwrap_or(20))
 }
 
-fn create_network(network: &str) -> Network {
+pub fn create_network(network: &str) -> Network {
     let network = network.to_lowercase();
     match network.as_str() {
         "mainnet" => Network::Bitcoin,

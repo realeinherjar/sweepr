@@ -3,6 +3,7 @@ use clap::Parser;
 mod bip39;
 mod cli;
 mod network;
+mod wallet;
 
 use self::cli::Args;
 
