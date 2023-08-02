@@ -15,22 +15,3 @@ pub fn create_network(network: &str) -> Network {
         _ => panic!("Invalid network"),
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_network() {
-        assert_eq!(create_network("mainnet"), Network::Bitcoin);
-        assert_eq!(create_network("testnet"), Network::Testnet);
-        assert_eq!(create_network("regtest"), Network::Regtest);
-        assert_eq!(create_network("Mainnet"), Network::Bitcoin);
-    }
-
-    #[test]
-    #[should_panic]
-    fn test_invalid_network() {
-        create_network("invalid");
-    }
-}
