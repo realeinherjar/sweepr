@@ -24,8 +24,16 @@ jobs:
         run: echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
       - name: Checkout code
         uses: actions/checkout@v3
+      - name: Set-up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
       - name: Build project
-        run: cargo build --release --locked
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release --locked
       - name: Upload binary to release
         uses: svenstaro/upload-release-action@v2
         with:
