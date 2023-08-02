@@ -44,3 +44,16 @@ jobs:
           toolchain: stable
       - run: rustup component add clippy
       - run: cargo clippy -- -D clippy::all -D warnings
+      
+  codecov:
+    name: Codecov
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: codecov/codecov-action@v3
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        flags: unittests # optional
+        name: codecov-umbrella # optional
+        fail_ci_if_error: false # optional (default = false)
+        verbose: true # optional (default = false)
