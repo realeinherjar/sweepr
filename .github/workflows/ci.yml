@@ -64,12 +64,8 @@ jobs:
       with:
         toolchain: stable
     - uses: actions-rs/cargo@v1
-      with:
-        command: clean
     - uses: codecov/codecov-action@v3
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        flags: unittests # optional
-        name: codecov-umbrella # optional
         fail_ci_if_error: false # optional (default = false)
         verbose: true # optional (default = false)
