@@ -1,13 +1,6 @@
-use clap::Parser;
-
-mod bip39;
-mod cli;
-mod network;
-mod wallet;
-
-use self::cli::Args;
+use sweepr::cli::run;
 
 fn main() {
-    let args = Args::parse();
+    run();
     println!("Hello, world!");
 }
