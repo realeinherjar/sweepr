@@ -1,4 +1,4 @@
-mod bip39;
+pub mod bip39;
 pub mod cli;
-mod network;
-mod wallet;
+pub mod network;
+pub mod wallet;
