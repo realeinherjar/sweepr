@@ -1,6 +1,7 @@
 # sweepr
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![codecov](https://codecov.io/gh/realeinherjar/sweepr/branch/main/graph/badge.svg?token=7NRUC51LLY)](https://codecov.io/gh/realeinherjar/sweepr)
 
 A sweepr CLI for the hodlr that just wants to sweep the funds from a seed to an address.
 
