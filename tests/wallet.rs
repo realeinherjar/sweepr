@@ -103,6 +103,7 @@ fn test_create_wallet() {
 }
 
 #[tokio::test]
+#[cfg(feature = "test-sync")]
 async fn test_sync_wallet_and_check_balance() {
     let mnemonic_24 = "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon art";
     let parsed_mnemonic_24 = parse_mnemonic(mnemonic_24);
