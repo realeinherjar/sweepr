@@ -4,7 +4,7 @@ use bdk::wallet::Wallet;
 use std::any::TypeId;
 use sweepr::bip39::parse_mnemonic;
 use sweepr::network::{create_blockchain, create_network};
-use sweepr::sync::{sync_wallet, check_balance};
+use sweepr::sync::{check_balance, sync_wallet};
 use sweepr::wallet::{create_derivation_path, create_wallet};
 
 fn is_derivationpath<T: ?Sized + 'static>(_s: &T) -> bool {
