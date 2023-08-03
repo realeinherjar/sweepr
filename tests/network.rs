@@ -23,11 +23,11 @@ fn test_invalid_network() {
 #[test]
 fn test_create_blockchain() {
     assert!(is_esplorablockchain(&create_blockchain(
-        "https://blockstream.info/api",
+        "https://mempool.space/api",
         None
     )));
     assert!(is_esplorablockchain(&create_blockchain(
-        "https://blockstream.info/testnet/api",
+        "https://mempool.space/testnet/api",
         None
     )));
     assert!(is_esplorablockchain(&create_blockchain(
@@ -35,11 +35,11 @@ fn test_create_blockchain() {
         None
     )));
     assert!(is_esplorablockchain(&create_blockchain(
-        "https://blockstream.info/api",
+        "https://mempool.space/api",
         Some(10)
     )));
     assert!(is_esplorablockchain(&create_blockchain(
-        "https://blockstream.info/testnet/api",
+        "https://mempool.space/testnet/api",
         Some(10)
     )));
     assert!(is_esplorablockchain(&create_blockchain(
