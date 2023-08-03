@@ -15,7 +15,7 @@ struct Args {
     network: String,
 
     /// Esplora server to use
-    #[arg(short, long, default_value = "https://blockstream.info/api")]
+    #[arg(short, long, default_value = "https://mempool.space/api")]
     url: String,
 }
 

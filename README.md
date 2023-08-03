@@ -19,7 +19,7 @@ Arguments:
 
 Options:
   -n, --network <NETWORK>  Network to use [default: mainnet]
-  -u, --url <URL>          Esplora server to use [default: https://blockstream.info/api]
+  -u, --url <URL>          Esplora server to use [default: https://mempool.space/api]
   -h, --help               Print help
   -V, --version            Print version
 ```
@@ -31,7 +31,7 @@ Options:
 sweepr "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon cactus" bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq
 
 # Testnet and a legacy address
-sweepr -n testnet -u "https://blockstream.info/testnet/api" "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon cactus" mipcBbFg9gMiCh81Kj8tqqdgoZub1ZJRfn
+sweepr -n testnet -u "https://mempool.space/testnet/api" "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon cactus" mipcBbFg9gMiCh81Kj8tqqdgoZub1ZJRfn
 
 # Regtest and a legacy address
 sweepr -n regtest -u "http://localhost:3000/api" "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon cactus" mipcBbFg9gMiCh81Kj8tqqdgoZub1ZJRfn
