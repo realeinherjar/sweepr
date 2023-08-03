@@ -1,6 +1,7 @@
 use sweepr::cli::run;
 
-fn main() {
+#[tokio::main]
+async fn main() {
     run();
     println!("Hello, world!");
 }
