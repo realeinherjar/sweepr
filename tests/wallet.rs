@@ -3,9 +3,13 @@ use bdk::database::MemoryDatabase;
 use bdk::wallet::Wallet;
 use std::any::TypeId;
 use sweepr::bip39::parse_mnemonic;
-use sweepr::network::{create_blockchain, create_network};
-use sweepr::sync::{check_balance, sync_wallet};
+use sweepr::network::create_network;
 use sweepr::wallet::{create_derivation_path, create_wallet};
+
+#[cfg(feature = "test-sync")]
+use sweepr::sync::{check_balance, sync_wallet};
+#[cfg(feature = "test-sync")]
+use sweepr::network::create_blockchain;
 
 fn is_derivationpath<T: ?Sized + 'static>(_s: &T) -> bool {
     TypeId::of::<DerivationPath>() == TypeId::of::<T>()
@@ -13,6 +17,7 @@ fn is_derivationpath<T: ?Sized + 'static>(_s: &T) -> bool {
 fn is_wallet<T: ?Sized + 'static>(_s: &T) -> bool {
     TypeId::of::<Wallet<MemoryDatabase>>() == TypeId::of::<T>()
 }
+#[cfg(feature = "test-sync")]
 fn is_bool<T: ?Sized + 'static>(_s: &T) -> bool {
     TypeId::of::<bool>() == TypeId::of::<T>()
 }
