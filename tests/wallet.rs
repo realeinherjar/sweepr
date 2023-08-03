@@ -6,6 +6,7 @@ use sweepr::bip39::parse_mnemonic;
 use sweepr::network::{create_blockchain, create_network};
 use sweepr::sync::{check_balance, sync_wallet};
 use sweepr::wallet::{create_derivation_path, create_wallet};
+use tokio::time::{sleep, Duration};
 
 fn is_derivationpath<T: ?Sized + 'static>(_s: &T) -> bool {
     TypeId::of::<DerivationPath>() == TypeId::of::<T>()
@@ -126,10 +127,11 @@ async fn test_sync_wallet_and_check_balance() {
         &derivation_path_internal,
     );
 
-    let esplora_mainnet = create_blockchain("https://blockstream.info/api/", None);
-    let esplora_testnet = create_blockchain("https://blockstream.info/testnet/api/", None);
+    let esplora_mainnet = create_blockchain("https://blockstream.info/api", None);
+    let esplora_testnet = create_blockchain("https://blockstream.info/testnet/api", None);
 
     sync_wallet(&wallet_mainnet_24, &esplora_mainnet).await;
+    sleep(Duration::from_millis(250)).await;
     sync_wallet(&wallet_testnet_24, &esplora_testnet).await;
 
     let balance_mainnet = check_balance(&wallet_mainnet_24);
