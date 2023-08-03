@@ -8,5 +8,11 @@ license = "MIT"
 readme = "README.md"
 
 [dependencies]
-bdk = { version = "0.28.0", features = ["keys-bip39", "use-esplora-blocking"] }
+bdk = { version = "0.28.0", features = [
+  "keys-bip39",
+  "async-interface",
+  "use-esplora-async",
+  "key-value-db",
+  "std",
+], default-features = false }
 clap = { version = "4.3.0", features = ["derive"] }

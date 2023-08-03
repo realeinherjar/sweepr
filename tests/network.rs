@@ -1,5 +1,10 @@
-use bdk::bitcoin::network::constants::Network;
-use sweepr::network::create_network;
+use bdk::{bitcoin::network::constants::Network, blockchain::esplora::EsploraBlockchain};
+use core::any::TypeId;
+use sweepr::network::{create_blockchain, create_network};
+
+fn is_esplorablockchain<T: ?Sized + 'static>(_s: &T) -> bool {
+    TypeId::of::<EsploraBlockchain>() == TypeId::of::<T>()
+}
 
 #[test]
 fn test_network() {
@@ -13,4 +18,32 @@ fn test_network() {
 #[should_panic]
 fn test_invalid_network() {
     create_network("invalid");
+}
+
+#[test]
+fn test_create_blockchain() {
+    assert!(is_esplorablockchain(&create_blockchain(
+        "https://blockstream.info/api",
+        None
+    )));
+    assert!(is_esplorablockchain(&create_blockchain(
+        "https://blockstream.info/testnet/api",
+        None
+    )));
+    assert!(is_esplorablockchain(&create_blockchain(
+        "localhost:3000/api",
+        None
+    )));
+    assert!(is_esplorablockchain(&create_blockchain(
+        "https://blockstream.info/api",
+        Some(10)
+    )));
+    assert!(is_esplorablockchain(&create_blockchain(
+        "https://blockstream.info/testnet/api",
+        Some(10)
+    )));
+    assert!(is_esplorablockchain(&create_blockchain(
+        "localhost:3000/api",
+        Some(10)
+    )));
 }
