@@ -38,11 +38,14 @@ fn test_create_wallet() {
     let mnemonic_24 = "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon art";
     let parsed_mnemonic_12 = parse_mnemonic(mnemonic_12);
     let parsed_mnemonic_24 = parse_mnemonic(mnemonic_24);
+
     let mainnet = create_network("mainnet");
     let testnet = create_network("testnet");
     let regtest = create_network("regtest");
+
     let derivation_path_external = create_derivation_path("m/84'/0'/0'/0");
     let derivation_path_internal = create_derivation_path("m/84'/0'/0'/1");
+
     let wallet_mainnet_12 = create_wallet(
         &parsed_mnemonic_12,
         &mainnet,
@@ -79,10 +82,18 @@ fn test_create_wallet() {
         &derivation_path_external,
         &derivation_path_internal,
     );
+
     assert!(is_wallet(&wallet_mainnet_12));
     assert!(is_wallet(&wallet_mainnet_24));
     assert!(is_wallet(&wallet_testnet_12));
     assert!(is_wallet(&wallet_testnet_24));
     assert!(is_wallet(&wallet_regtest_12));
     assert!(is_wallet(&wallet_regtest_24));
+
+    assert_eq!(wallet_mainnet_12.network(), mainnet);
+    assert_eq!(wallet_mainnet_24.network(), mainnet);
+    assert_eq!(wallet_testnet_12.network(), testnet);
+    assert_eq!(wallet_testnet_24.network(), testnet);
+    assert_eq!(wallet_regtest_12.network(), regtest);
+    assert_eq!(wallet_regtest_24.network(), regtest);
 }
