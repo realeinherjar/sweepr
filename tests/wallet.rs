@@ -7,9 +7,9 @@ use sweepr::network::create_network;
 use sweepr::wallet::{create_derivation_path, create_wallet};
 
 #[cfg(feature = "test-sync")]
-use sweepr::sync::{check_balance, sync_wallet};
-#[cfg(feature = "test-sync")]
 use sweepr::network::create_blockchain;
+#[cfg(feature = "test-sync")]
+use sweepr::sync::{check_balance, sync_wallet};
 
 fn is_derivationpath<T: ?Sized + 'static>(_s: &T) -> bool {
     TypeId::of::<DerivationPath>() == TypeId::of::<T>()
