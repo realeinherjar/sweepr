@@ -12,6 +12,7 @@ pub async fn sync_wallet(wallet: &Wallet<MemoryDatabase>, blockchain: &EsploraBl
 
 pub fn check_balance(wallet: &Wallet<MemoryDatabase>) -> bool {
     match wallet.get_balance() {
+        // no need for negative balance since get_balance() returns a Result<u64, _>
         Ok(balance) => !matches!(balance.confirmed, 0),
         Err(e) => panic!("Error checking balance: {}", e),
     }
