@@ -1,9 +1,11 @@
 use bdk::bitcoin::network::constants::Network;
-use bdk::blockchain::esplora::EsploraBlockchain;
+use bdk_esplora::esplora_client::{AsyncClient, Builder};
 
-pub fn create_blockchain(url: &str, stop_gap: Option<usize>) -> EsploraBlockchain {
-    // TODO: 20 stop_gap is hardcoded for now
-    EsploraBlockchain::new(url, stop_gap.unwrap_or(20))
+pub fn create_blockchain(url: &str) -> AsyncClient {
+    match Builder::new(url).build_async() {
+        Ok(client) => client,
+        Err(e) => panic!("Invalid esplora url: {}", e),
+    }
 }
 
 pub fn create_network(network: &str) -> Network {

@@ -8,16 +8,20 @@ license = "MIT"
 readme = "README.md"
 
 [dependencies]
-bdk = { version = "0.28.0", features = [
+bdk = { git = "https://github.com/bitcoindevkit/bdk", tag = "v1.0.0-alpha.1", features = [
   "keys-bip39",
-  "async-interface",
-  "use-esplora-async",
-  "key-value-db",
   "std",
 ], default-features = false }
+bdk_chain = { git = "https://github.com/bitcoindevkit/bdk", tag = "v1.0.0-alpha.1" }
+bdk_esplora = { git = "https://github.com/bitcoindevkit/bdk", tag = "v1.0.0-alpha.1", features = [
+  "async-https",
+] }
+bdk_file_store = { git = "https://github.com/bitcoindevkit/bdk", tag = "v1.0.0-alpha.1" }
 clap = { version = "4.3.0", features = ["derive"] }
-esplora-client = { version = "0.6.0", features = ["async-https-native"] }
 tokio = { version = "1", features = ["full"] }
 
 [features]
 test-sync = []
+
+[profile.release]
+lto = true
