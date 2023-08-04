@@ -11,8 +11,8 @@ use bdk::{
     wallet::{ChangeSet, Wallet},
     Error, FeeRate, TransactionDetails,
 };
-use bdk_file_store::Store;
 use bdk_esplora::EsploraAsyncExt;
+use bdk_file_store::Store;
 use std::env::temp_dir;
 use std::str::FromStr;
 
@@ -84,10 +84,7 @@ pub fn create_transaction(
 pub async fn sync_wallet(wallet: &mut Wallet<Store<'_, ChangeSet>>, client: &impl EsploraAsyncExt) {
     let local_chain = wallet.checkpoints();
 
-    let keychain_spks = wallet
-        .spks_of_all_keychains()
-        .into_iter()
-        .collect();
+    let keychain_spks = wallet.spks_of_all_keychains().into_iter().collect();
     let update = client
         .scan(
             local_chain,

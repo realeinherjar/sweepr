@@ -1,16 +1,13 @@
 use bdk::{
-    bitcoin::{
-        util::bip32::DerivationPath,
-        network::constants::Network,
-    },
-    wallet::{Wallet, ChangeSet},
+    bitcoin::{network::constants::Network, util::bip32::DerivationPath},
+    wallet::{ChangeSet, Wallet},
 };
 use bdk_file_store::Store;
 use std::any::TypeId;
 use sweepr::{
     bip39::parse_mnemonic,
     network::create_network,
-    wallet::{create_derivation_path, create_wallet, create_address, create_transaction},
+    wallet::{create_address, create_derivation_path, create_transaction, create_wallet},
 };
 
 #[cfg(feature = "test-sync")]
