@@ -1,17 +1,24 @@
+mod utils;
+
 use bdk::{
-    bitcoin::{network::constants::Network, util::bip32::DerivationPath},
+    bitcoin::{
+        network::constants::Network,
+        util::{bip32::DerivationPath, psbt::PartiallySignedTransaction},
+    },
     wallet::{ChangeSet, Wallet},
 };
 use bdk_file_store::Store;
 use std::any::TypeId;
 use sweepr::{
     bip39::parse_mnemonic,
-    network::create_network,
-    wallet::{create_address, create_derivation_path, create_transaction, create_wallet},
+    network::{create_blockchain, create_network},
+    wallet::{
+        create_address, create_derivation_path, create_signed_transaction, create_wallet,
+        get_fee_estimates,
+    },
 };
+use utils::get_funded_wallet_with_change;
 
-#[cfg(feature = "test-sync")]
-use sweepr::network::create_blockchain;
 #[cfg(feature = "test-sync")]
 use sweepr::wallet::{check_balance, sync_wallet};
 
@@ -24,6 +31,10 @@ fn is_wallet<T: ?Sized + 'static>(_s: &T) -> bool {
 #[cfg(feature = "test-sync")]
 fn is_bool<T: ?Sized + 'static>(_s: &T) -> bool {
     TypeId::of::<bool>() == TypeId::of::<T>()
+}
+
+fn is_psbt<T: ?Sized + 'static>(_s: &T) -> bool {
+    TypeId::of::<PartiallySignedTransaction>() == TypeId::of::<T>()
 }
 
 #[test]
@@ -155,4 +166,43 @@ fn test_create_address() {
     let address_testnet = create_address("mipcBbFg9gMiCh81Kj8tqqdgoZub1ZJRfn");
     assert!(address_mainnet.is_valid_for_network(Network::Bitcoin));
     assert!(address_testnet.is_valid_for_network(Network::Testnet));
+}
+
+#[tokio::test]
+async fn test_get_fee_estimates() {
+    let esplora_mainnet = create_blockchain("https://mempool.space/api");
+    let esplora_testnet = create_blockchain("https://mempool.space/testnet/api");
+    let fee_estimates_mainnet = get_fee_estimates(&esplora_mainnet, None).await;
+    let fee_estimates_testnet = get_fee_estimates(&esplora_testnet, None).await;
+    assert!(fee_estimates_mainnet > 0.0);
+    assert!(fee_estimates_testnet > 0.0);
+}
+
+#[tokio::test]
+async fn test_create_signed_transaction() {
+    let mnemonic_24 = "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon art";
+    let parsed_mnemonic_24 = parse_mnemonic(mnemonic_24);
+
+    let derivation_path_external = create_derivation_path("m/84'/0'/0'/0");
+    let derivation_path_internal = create_derivation_path("m/84'/0'/0'/1");
+
+    let (mut wallet, _txid) = get_funded_wallet_with_change(
+        parsed_mnemonic_24,
+        derivation_path_external,
+        derivation_path_internal,
+    );
+
+    let address_mainnet = create_address("bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq");
+    let address_testnet = create_address("mipcBbFg9gMiCh81Kj8tqqdgoZub1ZJRfn");
+
+    let esplora_mainnet = create_blockchain("https://mempool.space/api");
+    let esplora_testnet = create_blockchain("https://mempool.space/testnet/api");
+
+    let psbt_mainnet =
+        create_signed_transaction(&mut wallet, address_mainnet, &esplora_mainnet).await;
+    let psbt_testnet =
+        create_signed_transaction(&mut wallet, address_testnet, &esplora_testnet).await;
+
+    assert!(is_psbt(&psbt_mainnet));
+    assert!(is_psbt(&psbt_testnet));
 }
