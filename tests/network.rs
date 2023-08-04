@@ -1,9 +1,10 @@
-use bdk::{bitcoin::network::constants::Network, blockchain::esplora::EsploraBlockchain};
+use bdk::bitcoin::network::constants::Network;
+use bdk_esplora::esplora_client::AsyncClient;
 use core::any::TypeId;
 use sweepr::network::{create_blockchain, create_network};
 
 fn is_esplorablockchain<T: ?Sized + 'static>(_s: &T) -> bool {
-    TypeId::of::<EsploraBlockchain>() == TypeId::of::<T>()
+    TypeId::of::<AsyncClient>() == TypeId::of::<T>()
 }
 
 #[test]
@@ -24,26 +25,11 @@ fn test_invalid_network() {
 fn test_create_blockchain() {
     assert!(is_esplorablockchain(&create_blockchain(
         "https://mempool.space/api",
-        None
     )));
     assert!(is_esplorablockchain(&create_blockchain(
         "https://mempool.space/testnet/api",
-        None
     )));
     assert!(is_esplorablockchain(&create_blockchain(
         "localhost:3000/api",
-        None
-    )));
-    assert!(is_esplorablockchain(&create_blockchain(
-        "https://mempool.space/api",
-        Some(10)
-    )));
-    assert!(is_esplorablockchain(&create_blockchain(
-        "https://mempool.space/testnet/api",
-        Some(10)
-    )));
-    assert!(is_esplorablockchain(&create_blockchain(
-        "localhost:3000/api",
-        Some(10)
     )));
 }
