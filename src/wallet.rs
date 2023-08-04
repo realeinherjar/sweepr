@@ -9,12 +9,12 @@ use bdk::{
     descriptor::IntoWalletDescriptor,
     keys::bip39::Mnemonic,
     wallet::{ChangeSet, Wallet},
-    Error, FeeRate, TransactionDetails,
+    FeeRate, SignOptions,
 };
-use bdk_esplora::EsploraAsyncExt;
+use bdk_esplora::{esplora_client::AsyncClient, EsploraAsyncExt};
 use bdk_file_store::Store;
-use std::env::temp_dir;
 use std::str::FromStr;
+use std::{collections::HashMap, env::temp_dir};
 
 const DB_MAGIC: &str = "sweepr";
 const STOP_GAP: usize = 5;
@@ -65,20 +65,39 @@ pub fn create_address(input: &str) -> Address {
     }
 }
 
-pub fn create_transaction(
-    wallet: &mut Wallet<Store<ChangeSet>>,
+pub async fn create_signed_transaction(
+    wallet: &mut Wallet<Store<'_, ChangeSet>>,
     address: Address,
-) -> Result<(PartiallySignedTransaction, TransactionDetails), Error> {
-    let mut builder = wallet.build_tx();
-    builder
+    client: &AsyncClient,
+) -> PartiallySignedTransaction {
+    let fee_rate = get_fee_estimates(client, None).await;
+    let mut tx_builder = wallet.build_tx();
+    tx_builder
         // Spend all outputs in this wallet.
         .drain_wallet()
         // Send the excess (which is all the coins minus the fee) to this address.
         .drain_to(address.script_pubkey())
-        .fee_rate(FeeRate::from_sat_per_vb(5.0))
+        .fee_rate(FeeRate::from_sat_per_vb(fee_rate))
         .enable_rbf();
 
-    builder.finish()
+    let (mut psbt, _) = match tx_builder.finish() {
+        Ok(psbt) => psbt,
+        Err(e) => panic!("Error creating transaction: {}", e),
+    };
+    match wallet.sign(&mut psbt, SignOptions::default()) {
+        Ok(finalized) => finalized,
+        Err(e) => panic!("Error signing transaction: {}", e),
+    };
+    psbt
+}
+
+pub async fn broadcast_signed_transaction(psbt: PartiallySignedTransaction, client: &AsyncClient) {
+    let tx = psbt.extract_tx();
+    match client.broadcast(&tx).await {
+        Ok(_) => println!("Transaction sent!"),
+        Err(e) => panic!("Error broadcasting transaction: {}", e),
+    };
+    println!("Tx broadcasted! Txid: {}", tx.txid());
 }
 
 pub async fn sync_wallet(wallet: &mut Wallet<Store<'_, ChangeSet>>, client: &impl EsploraAsyncExt) {
@@ -108,4 +127,16 @@ pub fn check_balance(wallet: &Wallet<Store<ChangeSet>>) -> bool {
     // no need to check for lower than 0 since it is unsigned
     let balance = wallet.get_balance();
     !matches!(balance.confirmed, 0)
+}
+
+pub async fn get_fee_estimates(client: &AsyncClient, block: Option<u64>) -> f32 {
+    let fee_estimates: HashMap<String, f64> = match client.get_fee_estimates().await {
+        Ok(future) => future,
+        Err(e) => panic!("Error getting fee estimates: {}", e),
+    };
+    let fee_estimate = match block {
+        Some(block) => fee_estimates.get(&block.to_string()).unwrap(),
+        None => fee_estimates.get("2").unwrap(),
+    };
+    *fee_estimate as f32
 }
