@@ -16,8 +16,11 @@ use bdk_file_store::Store;
 use std::str::FromStr;
 use std::{collections::HashMap, env::temp_dir};
 
+/// The magic string used to identify the database.
 const DB_MAGIC: &str = "sweepr";
+/// The number of unused addresses to check before stopping.
 const STOP_GAP: usize = 5;
+/// The number of parallel requests to send to the esplora server.
 const PARALLEL_REQUESTS: usize = 5;
 
 /// Derivation paths for different wallets without the last index.
@@ -45,6 +48,7 @@ pub fn create_derivation_paths_with_last_index(input: &str) -> (DerivationPath, 
     )
 }
 
+/// Creates a derivation path from a string.
 pub fn create_derivation_path(input: &str) -> DerivationPath {
     match DerivationPath::from_str(input) {
         Ok(derivation_path) => derivation_path,
@@ -52,6 +56,7 @@ pub fn create_derivation_path(input: &str) -> DerivationPath {
     }
 }
 
+/// Creates a wallet from a mnemonic, a network type, and an internal and external derivation paths.
 pub fn create_wallet<'a>(
     seed: Mnemonic,
     network: Network,
@@ -83,6 +88,7 @@ pub fn create_wallet<'a>(
     Wallet::new(external_descriptor, Some(internal_descriptor), db, network).unwrap()
 }
 
+/// Creates an address from a string.
 pub fn create_address(input: &str) -> Address {
     match Address::from_str(input) {
         Ok(address) => address,
@@ -90,6 +96,10 @@ pub fn create_address(input: &str) -> Address {
     }
 }
 
+/// Create a Signed Transaction from a wallet using all available coins to send to a given address.
+/// Estimate the fee using the Esplora client.
+/// Tries to use fee rate such that it will be included in the next block.
+/// By default, the transaction is marked as RBF.
 pub async fn create_signed_transaction(
     wallet: &mut Wallet<Store<'_, ChangeSet>>,
     address: Address,
@@ -116,6 +126,7 @@ pub async fn create_signed_transaction(
     psbt
 }
 
+/// Broadcast a signed transaction to the network using the given Esplora client.
 pub async fn broadcast_signed_transaction(psbt: PartiallySignedTransaction, client: &AsyncClient) {
     let tx = psbt.extract_tx();
     match client.broadcast(&tx).await {
@@ -125,6 +136,7 @@ pub async fn broadcast_signed_transaction(psbt: PartiallySignedTransaction, clie
     println!("Tx broadcasted! Txid: {}", tx.txid());
 }
 
+/// Sync a wallet with the Esplora client.
 pub async fn sync_wallet(wallet: &mut Wallet<Store<'_, ChangeSet>>, client: &AsyncClient) {
     let local_chain = wallet.checkpoints();
 
@@ -148,12 +160,15 @@ pub async fn sync_wallet(wallet: &mut Wallet<Store<'_, ChangeSet>>, client: &Asy
     }
 }
 
+/// Check if a wallet has any coins to spend.
 pub fn check_balance(wallet: &Wallet<Store<ChangeSet>>) -> bool {
     // no need to check for lower than 0 since it is unsigned
     let balance = wallet.get_balance();
     !matches!(balance.confirmed, 0)
 }
 
+/// Get the fee estimates from the Esplora server.
+/// The default block is 1, which is the next block.
 pub async fn get_fee_estimates(client: &AsyncClient, block: Option<u64>) -> f32 {
     let fee_estimates: HashMap<String, f64> = match client.get_fee_estimates().await {
         Ok(future) => future,
@@ -161,7 +176,7 @@ pub async fn get_fee_estimates(client: &AsyncClient, block: Option<u64>) -> f32 
     };
     let fee_estimate = match block {
         Some(block) => fee_estimates.get(&block.to_string()).unwrap(),
-        None => fee_estimates.get("2").unwrap(),
+        None => fee_estimates.get("1").unwrap(),
     };
     *fee_estimate as f32
 }

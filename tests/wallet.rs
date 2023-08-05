@@ -11,7 +11,7 @@ use bdk_file_store::Store;
 use std::any::TypeId;
 use sweepr::{
     bip39::parse_mnemonic,
-    network::{create_blockchain, create_network},
+    network::{create_client, create_network},
     wallet::{
         create_address, create_derivation_path, create_derivation_paths_with_last_index,
         create_signed_transaction, create_wallet, get_fee_estimates,
@@ -155,8 +155,8 @@ async fn test_sync_wallet_and_check_balance() {
         derivation_path_internal.clone(),
     );
 
-    let esplora_mainnet = create_blockchain("https://mempool.space/api");
-    let esplora_testnet = create_blockchain("https://mempool.space/testnet/api");
+    let esplora_mainnet = create_client("https://mempool.space/api");
+    let esplora_testnet = create_client("https://mempool.space/testnet/api");
 
     sync_wallet(&mut wallet_mainnet_24, &esplora_mainnet).await;
     sync_wallet(&mut wallet_testnet_24, &esplora_testnet).await;
@@ -178,8 +178,8 @@ fn test_create_address() {
 
 #[tokio::test]
 async fn test_get_fee_estimates() {
-    let esplora_mainnet = create_blockchain("https://mempool.space/api");
-    let esplora_testnet = create_blockchain("https://mempool.space/testnet/api");
+    let esplora_mainnet = create_client("https://mempool.space/api");
+    let esplora_testnet = create_client("https://mempool.space/testnet/api");
     let fee_estimates_mainnet = get_fee_estimates(&esplora_mainnet, None).await;
     let fee_estimates_testnet = get_fee_estimates(&esplora_testnet, None).await;
     assert!(fee_estimates_mainnet > 0.0);
@@ -203,8 +203,8 @@ async fn test_create_signed_transaction() {
     let address_mainnet = create_address("bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq");
     let address_testnet = create_address("mipcBbFg9gMiCh81Kj8tqqdgoZub1ZJRfn");
 
-    let esplora_mainnet = create_blockchain("https://mempool.space/api");
-    let esplora_testnet = create_blockchain("https://mempool.space/testnet/api");
+    let esplora_mainnet = create_client("https://mempool.space/api");
+    let esplora_testnet = create_client("https://mempool.space/testnet/api");
 
     let psbt_mainnet =
         create_signed_transaction(&mut wallet, address_mainnet, &esplora_mainnet).await;
