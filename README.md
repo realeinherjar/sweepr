@@ -7,6 +7,9 @@ A sweepr CLI for the hodlr that just wants to sweep the funds from a seed to an 
 
 ## Usage
 
+By default sweepr will generate segwit v0 addresses.
+In the future, when taproot is more widely adopted, this will be the default.
+
 ```bash
 $ sweepr --help
 A sweepr CLI for the hodlr that just wants to sweep the funds from a seed to an address

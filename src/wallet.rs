@@ -64,7 +64,7 @@ pub fn create_wallet<'a>(
 
     // generate external and internal descriptor from mnemonic
     let (external_descriptor, _ext_keymap) =
-        match descriptor!(tr((seed.clone(), derivation_path_external.clone())))
+        match descriptor!(wpkh((seed.clone(), derivation_path_external.clone())))
             .unwrap()
             .into_wallet_descriptor(&secp, network)
         {
@@ -72,7 +72,7 @@ pub fn create_wallet<'a>(
             Err(e) => panic!("Invalid external derivation path: {}", e),
         };
     let (internal_descriptor, _int_keymap) =
-        match descriptor!(tr((seed.clone(), derivation_path_internal.clone())))
+        match descriptor!(wpkh((seed.clone(), derivation_path_internal.clone())))
             .unwrap()
             .into_wallet_descriptor(&secp, network)
         {
