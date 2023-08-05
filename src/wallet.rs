@@ -20,6 +20,31 @@ const DB_MAGIC: &str = "sweepr";
 const STOP_GAP: usize = 5;
 const PARALLEL_REQUESTS: usize = 5;
 
+/// Derivation paths for different wallets without the last index.
+pub const DERIVATION_PATHS: &[&str; 11] = &[
+    "m/44'/0'/0'/",
+    "m/48'/0'/0'/",
+    "m/49'/0'/0'/",
+    "m/84'/0'/0'/",
+    "m/47'/0'/0'/",
+    "m/84'/0'/2147483644'/",
+    "m/84'/0'/2147483645'/",
+    "m/44'/0'/2147483646'/",
+    "m/49'/0'/2147483646'/",
+    "m/84'/0'/2147483646'/",
+    "m/86'/0'/0'/",
+];
+
+/// Derivation paths for different wallets with the last index.
+pub fn create_derivation_paths_with_last_index(input: &str) -> (DerivationPath, DerivationPath) {
+    let extenal_str = input.to_owned() + "0";
+    let internal_str = input.to_owned() + "1";
+    (
+        create_derivation_path(extenal_str.as_str()),
+        create_derivation_path(internal_str.as_str()),
+    )
+}
+
 pub fn create_derivation_path(input: &str) -> DerivationPath {
     match DerivationPath::from_str(input) {
         Ok(derivation_path) => derivation_path,
@@ -100,7 +125,7 @@ pub async fn broadcast_signed_transaction(psbt: PartiallySignedTransaction, clie
     println!("Tx broadcasted! Txid: {}", tx.txid());
 }
 
-pub async fn sync_wallet(wallet: &mut Wallet<Store<'_, ChangeSet>>, client: &impl EsploraAsyncExt) {
+pub async fn sync_wallet(wallet: &mut Wallet<Store<'_, ChangeSet>>, client: &AsyncClient) {
     let local_chain = wallet.checkpoints();
 
     let keychain_spks = wallet.spks_of_all_keychains().into_iter().collect();

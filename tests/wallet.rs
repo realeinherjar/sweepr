@@ -13,8 +13,8 @@ use sweepr::{
     bip39::parse_mnemonic,
     network::{create_blockchain, create_network},
     wallet::{
-        create_address, create_derivation_path, create_signed_transaction, create_wallet,
-        get_fee_estimates,
+        create_address, create_derivation_path, create_derivation_paths_with_last_index,
+        create_signed_transaction, create_wallet, get_fee_estimates,
     },
 };
 use utils::get_funded_wallet_with_change;
@@ -54,6 +54,14 @@ fn test_create_derivation_path() {
 #[should_panic]
 fn test_invalid_derivation_path() {
     create_derivation_path("Hello!");
+}
+
+#[test]
+fn test_create_derivation_paths_with_last_index() {
+    let (derivation_path_external, derivation_path_internal) =
+        create_derivation_paths_with_last_index("m/44'/0'/0'/");
+    assert!(is_derivationpath(&derivation_path_external));
+    assert!(is_derivationpath(&derivation_path_internal));
 }
 
 #[test]
