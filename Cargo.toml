@@ -18,6 +18,8 @@ bdk_esplora = { git = "https://github.com/bitcoindevkit/bdk", tag = "v1.0.0-alph
 ] }
 bdk_file_store = { git = "https://github.com/bitcoindevkit/bdk", tag = "v1.0.0-alpha.1" }
 clap = { version = "4.3.0", features = ["derive"] }
+futures = "0.3.28"
+rayon = "1.7.0"
 tokio = { version = "1", features = ["full"] }
 
 [features]
