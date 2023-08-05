@@ -5,7 +5,7 @@ use rayon::prelude::*;
 
 use crate::{
     bip39::parse_mnemonic,
-    network::{create_blockchain, create_network},
+    network::{create_client, create_network},
     wallet::{
         broadcast_signed_transaction, check_balance, create_address,
         create_derivation_paths_with_last_index, create_signed_transaction, create_wallet,
@@ -32,10 +32,23 @@ struct Args {
     url: String,
 }
 
+/// Parse command line arguments
 fn parse() -> Args {
     Args::parse()
 }
 
+/// Run the CLI
+/// 1. Parse command line arguments
+/// 2. Parse mnemonic
+/// 3. Create address from string
+/// 4. Create network from string
+/// 5. Create derivation paths from the specified derivation paths (11 by default)
+/// 6. Create wallets from the specified derivation paths
+/// 7. Create an Espora client from the specified url
+/// 8. Sync wallets
+/// 9. Check balance of wallets
+/// 10. Create signed transactions for wallets that have balance
+/// 11. Broadcast signed transactions to the Espora server
 pub async fn run() {
     let args = parse();
     let seed = parse_mnemonic(&args.seed);
@@ -51,7 +64,7 @@ pub async fn run() {
             create_wallet(seed.clone(), network, external.clone(), internal.clone())
         })
         .collect();
-    let client = create_blockchain(&args.url);
+    let client = create_client(&args.url);
 
     // parallel async wallet sync
     let tasks = wallets
